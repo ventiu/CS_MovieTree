@@ -9,56 +9,87 @@
 
 interface MovieDataInterface {
     public int getRank();
+
     public String getTitle();
+
     public String getGenre();
+
     public String getDirector();
+
     public int getYearPublished();
 }
 
+/**
+ * The movieData object stores all of the relevant information of the given movie and
+ * allows access through its given interface.
+ */
 public class MovieData implements MovieDataInterface {
-    public int getRank() { return 0; }
+    private final int rank;
+    private final int yearPub;
+    private final String title;
+    private final String genre;
+    private final String director;
 
-    public String getTitle() { return null; }
+    /**
+     * This method is the constructor to set all of the fields in the movieData
+     * object.
+     *
+     * @param rank     the rank of the given movie.
+     * @param yearPub  the year the given movie was published.
+     * @param title    the title of the given movie.
+     * @param genre    the genre(s) of the given movie.
+     * @param director the director of the movie.
+     */
+    public MovieData(int rank, int yearPub, String title, String genre, String director) {
+        this.rank = rank;
+        this.yearPub = yearPub;
+        this.title = title;
+        this.genre = genre;
+        this.director = director;
+    }
 
-   public String getGenre() { return null; }
+    /**
+     * Returns the assigned rank.
+     *
+     * @return the rank int.
+     */
+    public int getRank() {
+        return rank;
+    }
 
-    public String getDirector() { return null; }
+    /**
+     * Returns the assigned title.
+     *
+     * @return the title string.
+     */
+    public String getTitle() {
+        return title;
+    }
 
-    public int getYearPublished() { return 0; }
-}
+    /**
+     * Returns the assigned genre.
+     *
+     * @return the genre string.
+     */
+    public String getGenre() {
+        return genre;
+    }
 
-class MovieDataPlaceholder1 implements MovieDataInterface {
-    public int getRank() { return 0; }
+    /**
+     * Returns the assigned director.
+     *
+     * @return the director string.
+     */
+    public String getDirector() {
+        return director;
+    }
 
-    public String getTitle() { return "Movie 1 Dune"; }
-
-    public String getGenre() { return "Action/Adventure"; }
-
-    public String getDirector() { return "Denis Villeneuve"; }
-
-    public int getYearPublished() { return 2021; }
-}
-
-class MovieDataPlaceholder2 implements MovieDataInterface {
-    public int getRank() { return 2; }
-
-    public String getTitle() { return "Movie 2 BlackWidow"; }
-
-    public String getGenre() { return "Action"; }
-
-    public String getDirector() { return "Cate Shortland"; }
-
-    public int getYearPublished() { return 2021; }
-}
-
-class MovieDataPlaceholder3 implements MovieDataInterface {
-    public int getRank() { return 1; }
-
-    public String getTitle() { return "Edward Scissorhands"; }
-
-    public String getGenre() { return "Fantasy/Romance"; }
-
-    public String getDirector() { return "Tim Burton"; }
-
-    public int getYearPublished() { return 1990; }
+    /**
+     * Returns the assigned year published.
+     *
+     * @return the year published int.
+     */
+    public int getYearPublished() {
+        return yearPub;
+    }
 }
