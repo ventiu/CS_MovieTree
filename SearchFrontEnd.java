@@ -29,6 +29,7 @@ interface SearchFrontEndInterface  {
     // 2. Entering in their own movies with ranks that are above 1000
     // 3. Quit
     void menu();
+    int score();
 }
 
 // public class (implemented primarilly in final app week)
@@ -51,14 +52,14 @@ public class SearchFrontEnd implements SearchFrontEndInterface {
 
     @Override
     public void menu(){
-        Scanner scnr = new Scanner(System.in);
 		while (true){
+            Scanner scnr = new Scanner(System.in);
 			System.out.println("Movie Tree Menu");
 			System.out.println("1. Entering a rank to get a trivia question asked");
 			System.out.println("2. Entering in their own movies with ranks that are above 1000");
 			System.out.println("3. Quit");
 			System.out.println("Please Select 1, 2, or 3.");
-			String result = scnr.next();
+            String result = scnr.next();
             // When insert 1
             if (result.equals("1")){
                 int count = 0;
@@ -67,9 +68,18 @@ public class SearchFrontEnd implements SearchFrontEndInterface {
                 System.out.println("If at least two of them are 80% correct, you will earn 1 point");
                 System.out.println("Current Score: " + score);
                 System.out.println("Enter a rank: ");
+                int rank2 = 0;
                 // get the next input as rank
-                String rank = scnr.next();
+                try {
+                    rank2 = scnr.nextInt();
+                }
+                catch (InputMismatchException e){
+                    System.out.println("The rank has to be an integer, please try again");
+                    continue;
+                }
+                String rank = String.valueOf(rank2);
                 System.out.println("Movie Title is: " + backEndInterface.findTitles(rank));
+
 
                 System.out.println("Please guess the movie's Year:");
                 String year = scnr.next();
@@ -81,8 +91,9 @@ public class SearchFrontEnd implements SearchFrontEndInterface {
                     System.out.println("Sorry, you are guessing incorrect, the correct answer is: " 
                     + backEndInterface.findYear(rank));
                 }
+                scnr.nextLine();
                 System.out.println("Please guess the movie's Director:");
-                String director = scnr.next();
+                String director = scnr.nextLine();
                 if (director.equals(backEndInterface.findDirector(rank))) {
                     System.out.println("Congradulation, you are guessing correct");
                     count++;
@@ -92,9 +103,8 @@ public class SearchFrontEnd implements SearchFrontEndInterface {
                     + backEndInterface.findDirector(rank));
                 }
                 System.out.println("Please guess the movie's Gerne:");
-
-                String gerne = scnr.next();
-                if (gerne.equals(backEndInterface.findYear(rank))) {
+                String gerne = scnr.nextLine();
+                if (gerne.equals(backEndInterface.findGenre(rank))) {
                     System.out.println("Congradulation, you are guessing correct");
                     count++;
                 }
@@ -109,7 +119,7 @@ public class SearchFrontEnd implements SearchFrontEndInterface {
                     System.out.println("Congradulation, your guessing correct percentage is more than 60%, score+1");
                     this.score++;
                 }
-                else System.out.println("Sorry, your guessing correct percentage is less than 60%, score+1");
+                else System.out.println("Sorry, your guessing correct percentage is less than 60%");
                 continue;
             }
             // When insert 2
@@ -131,10 +141,12 @@ public class SearchFrontEnd implements SearchFrontEndInterface {
                 catch ( InputMismatchException e){
 					System.out.println("Noninteger value included in Movie Year. Please Start Over.");
 				}
-                System.out.println("Please insert a movie title");
-                String title = scnr.nextLine();
                 System.out.println("Please insert a movie genre");
                 String genre = scnr.next();
+                scnr.nextLine();
+                System.out.println("Please insert a movie title");
+                String title = scnr.nextLine();
+                System.out.println("Please insert a movie director");
                 String Director = scnr.nextLine();
                 MovieData movie = new MovieData(rank, year, title, genre, Director);
 
@@ -150,8 +162,11 @@ public class SearchFrontEnd implements SearchFrontEndInterface {
             }
         }
     }
+    public int score() {
+        return this.score;
+    }
 }
-
+/*
 class SearchFrontEndPlaceholder implements SearchFrontEndInterface {
     private SearchBackEndInterface searchBackEndPlaceholder;
 
@@ -162,4 +177,6 @@ class SearchFrontEndPlaceholder implements SearchFrontEndInterface {
     public void menu(){
 
     }
-}
+
+
+}*/
