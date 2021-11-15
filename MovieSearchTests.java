@@ -126,8 +126,8 @@ public class MovieSearchTests {
 		  assertEquals(2000,test1.size());
 	  }
     // Back End Developer Tests
- /**
-       * JUnit5 test that tests inserting red uncle.
+/**
+       * JUnit5 test that tests inserting red uncle, and double checks that the correct nodes end up in the correct locations in the tree.
        */
       @Test
       public void BackEndDeveloperTestingInsertingWithRedUncle() {
@@ -152,16 +152,17 @@ public class MovieSearchTests {
               SearchBackEnd.Node<MovieData> node4 = new SearchBackEnd.Node<MovieData>(data3);
               redBlackTree.insert(node4.data);
 
-              assertEquals("3, 2, 1, 4",
-                              Integer.toString(redBlackTree.root.data.getRank()).toString() + ", "
-                                              + Integer.toString(redBlackTree.root.leftChild.data.getRank()).toString() + ", "
-                                              + Integer.toString(redBlackTree.root.rightChild.data.getRank()).toString() + ", "
-                                              + Integer.toString(redBlackTree.root.rightChild.rightChild.data.getRank()).toString());
+              
+              assertEquals(redBlackTree.root.data.getRank(),3);
+              assertEquals(redBlackTree.root.leftChild.data.getRank(),2);
+              assertEquals(redBlackTree.root.rightChild.data.getRank(),1);
+              assertEquals(redBlackTree.root.rightChild.rightChild.data.getRank(),4);
+
       }
 
       /**
        * JUnit5 test that tests isBlack and node coloring while inserting with red
-       * uncle.
+       * uncle. This makes sure red black tree properties are being followed
        */
 
       @Test
@@ -188,16 +189,16 @@ public class MovieSearchTests {
               redBlackTree.insert(node4.data);
               
 
-              boolean n1 = redBlackTree.root.isBlack;
-              boolean n2 = redBlackTree.root.leftChild.isBlack;
-              boolean n3 = redBlackTree.root.rightChild.isBlack;
-              boolean n4 = redBlackTree.root.rightChild.rightChild.isBlack;
-              String checkBoolean = n1 + " " + n2 + " " + n3 + " " + n4;
-              assertEquals("true true true false", checkBoolean);
+              assertEquals(redBlackTree.root.isBlack, true);
+              assertEquals(redBlackTree.root.leftChild.isBlack, true);
+              assertEquals(redBlackTree.root.rightChild.isBlack, true);
+              assertEquals(redBlackTree.root.rightChild.rightChild.isBlack, false);
+
       }
 
       /**
-       * JUnit5 test that tests findDirector
+       * JUnit5 test that tests findDirector by adding 4 elements to the red black tree and seeing if it gets the correct director 
+       * when it is called
        */
       @Test
       public void backEndDeveloperTestingFindDirector() {
@@ -205,23 +206,86 @@ public class MovieSearchTests {
               MovieData data = new MovieData(1, 2001, "Harry Potter", "Fantasy", "David Yates");
               MovieData data1 = new MovieData(2, 2004, "Spider-Man", "Action", "Sam Raimi");
               MovieData data2 = new MovieData(3, 2012, "The Avengers", "Action", "Josh Whedon");
-              SearchBackEnd.Node<MovieData> node1 = new SearchBackEnd.Node<MovieData>(data);
-              SearchBackEnd.Node<MovieData> node2 = new SearchBackEnd.Node<MovieData>(data1);
-              SearchBackEnd.Node<MovieData> node3 = new SearchBackEnd.Node<MovieData>(data2);
-              redBlackTree.insert(node1.data);
-              redBlackTree.insert(node2.data);
-              redBlackTree.insert(node3.data);
+
+              redBlackTree.insert(data);
+              redBlackTree.insert(data1);
+              redBlackTree.insert(data2);
               MovieData data3 = new MovieData(4, 2000, "X-Men", "Action", "Byran Singer");
-              SearchBackEnd.Node<MovieData> node4 = new SearchBackEnd.Node<MovieData>(data3);
-              redBlackTree.insert(node4.data);
+              redBlackTree.insert(data3);
               List<String> list = new LinkedList();
               list.add(data1.getDirector());
               assertEquals(list, redBlackTree.findDirector("2"));
-      }    
-	
+      }
+
+      /**
+       * This method adds 5 movies to a red black tree then checks the contains() method on two that do exist and one that doesn't
+       * and sees if they are true and false respectively
+       */
+      @Test
+      public void testContians()
+      {
+    	  SearchBackEnd redBlackTree = new SearchBackEnd();
+    	  MovieData data = new MovieData(1, 2001, "Harry Potter", "Fantasy", "David Yates");
+          MovieData data1 = new MovieData(2, 2004, "Spider-Man", "Action", "Sam Raimi");
+          MovieData data2 = new MovieData(3, 2012, "The Avengers", "Action", "Josh Whedon");
+          MovieData data3 = new MovieData(4, 2000, "X-Men", "Action", "Byran Singer");
+          MovieData data4 = new MovieData(5, 2016, "Split", "Horror,Thriller", "M. Night Shyamalan");
+          redBlackTree.insert(data);
+          redBlackTree.insert(data1);
+          redBlackTree.insert(data2);
+          redBlackTree.insert(data3);
+          redBlackTree.insert(data4);
+          
+          assertEquals(redBlackTree.contains(data), true);
+          assertEquals(redBlackTree.contains(data3), true);
+          assertEquals(redBlackTree.contains(new MovieData(100, 1, "", "", "")), false);
+      }
+      
+      /**
+       * This method loads all the elements from the datafile into the red black tree
+       * then does a preorder traversal with traverse() and gets an array that has true for all elements that do exist
+       * and false for all those that don't. If any of the elements are false it fails the test.
+       * @throws FileNotFoundException
+       */
+      @Test
+      public void testHasAllNodes() throws FileNotFoundException
+      {
+    	  List<MovieDataInterface> movies = new MovieLoader().loadAllFilesInDirectory("DWTests/TestDir1/");
+          SearchBackEnd engine = new SearchBackEnd();
+          for(MovieDataInterface movie : movies) engine.insert(movie);
+          boolean allTrue = true;
+          boolean[] output = new boolean[movies.size()];
+          for(int i = 0; i < 1000; i++)
+          {
+        	  output[i] = false;
+          }
+          traverse(output, engine.root);
+          for(int i = 1; i <=1000; i++)
+          {
+        	  if(!output[i-1]) {
+        		  allTrue = false;
+        	  }
+        		  
+          }
+          
+          assertEquals(allTrue, true);
+      }
+      /**
+       * A helper method that does a pre-order traversal of the tree and updates the boolean array with true for all ranks that it finds
+       * @param output - an array of booleans, it is initialized to false and is set to true for all indexes equal to rank - 1
+       * @param subtree - the root of the subtree
+       */
+      private void traverse(boolean[] output,  SearchBackEnd.Node<MovieData> subtree)
+      {
+    	  
+    	  if(subtree == null) {return;}
+    	  traverse(output, subtree.leftChild);
+    	  output[subtree.data.getRank() - 1] = true;
+    	  
+    	  traverse(output, subtree.rightChild);
+      }	
 // Front End Developer Tests
 
-    // Integration Manager Tests
 
 
 }
