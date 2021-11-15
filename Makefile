@@ -3,11 +3,11 @@ run: compile
 
 compile: dataWrangler backEnd frontEnd MovieSearchApp.class
 
-test: dataWrangler MovieSearchTests.java
+test: compileTests
 	java -jar junit5.jar --class-path . --scan-classpath
 
-MovieSearchTests.java:
-	javac -cp .:junit5.jar MovieSearchTests.java MovieData.java MovieLoader.java -Xlint
+compileTests:  MovieSearchTests.java MovieData.java MovieLoader.java SearchBackEnd.java SearchFrontEnd.java
+	javac -cp .:junit5.jar MovieSearchTests.java MovieData.java MovieLoader.java SearchBackEnd.java SearchFrontEnd.java -Xlint	
 
 dataWrangler: MovieData.class MovieLoader.class
 	
