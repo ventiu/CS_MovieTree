@@ -6,16 +6,17 @@
 // TA: Cameron Ruggles
 // Lecturer: Gary Dahl
 // Notes to Grader: <optional extra notes>
-/**
- * This interface generates methods need to create a RedBlack Tree in  SearchBackEnd.
- * 
- * @author Julia Oghigian
- */
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Stack;
+/**
+ * This is an interface for a Red Black Tree for a list of movies extends Comparable and Iterable
+ * 
+ * @author Julia Oghigian
+ */
 interface SearchBackEndInterface<T extends Comparable<T>> extends Iterable<T> {
     // Note that the provided iterators step through the data within this
     // collection in sorted order, as defined by their compareTo() method.
@@ -47,18 +48,21 @@ interface SearchBackEndInterface<T extends Comparable<T>> extends Iterable<T> {
 	 */
 	boolean containsMovie(MovieDataInterface movie);
 	/**
-	 * Checks whether the tree contains the value *data*.
+	 * Finds the years at the specific node using movieRank as a key.
 	 *
-	 * @param data the data value to test for
-	 * @return true if *data* is in the tree, false if it is not in the tree
+	 * @param movieRank key
+	 * @returns List contain movie titles
 	 */
+
+	List<String> findYear(String movieRank);
 	/**
-	 * Checks whether the tree contains the value *data*.
+	 * Finds the genre at the specific node using movieRank as a key.
 	 *
-	 * @param data the data value to test for
-	 * @return true if *data* is in the tree, false if it is not in the tree
+	 * @param movieRank key
+	 * @returns List contain movie titles
 	 */
-	//boolean contains(MovieData data);
+	List<String> findGenre(String movieRank);
+	
 
 }
 /**
@@ -66,21 +70,20 @@ interface SearchBackEndInterface<T extends Comparable<T>> extends Iterable<T> {
  *
  * @author Julia Oghigian
  */
-
-public class SearchBackEnd<MovieData extends Comparable<MovieData>> implements SearchBackEndInterface {
+public class SearchBackEnd implements SearchBackEndInterface {
 
 	/**
 	 * This class represents a node holding a single value within a binary tree the
 	 * parent, left, and right child references are always maintained.
 	 */
 	protected static class Node<MovieData> {
-		public MovieData data;
+		public MovieDataInterface data;
 		public Node<MovieData> parent; // null for root node
 		public Node<MovieData> leftChild;
 		public Node<MovieData> rightChild;
 		public boolean isBlack;
 
-		public Node(MovieData data) {
+		public Node(MovieDataInterface data) {
 			this.data = data;
 			this.isBlack = false;
 
@@ -103,7 +106,7 @@ public class SearchBackEnd<MovieData extends Comparable<MovieData>> implements S
 		 * RedBlackTree class below produces an inorder traversal of the nodes / values
 		 * of the tree. This method will be helpful as a helper for the debugging and
 		 * testing of your rotation implementation.
-		 *
+		 * 
 		 * @return string containing the values of this tree in level order
 		 */
 		@Override
@@ -133,7 +136,7 @@ public class SearchBackEnd<MovieData extends Comparable<MovieData>> implements S
 	 * value to a new node in a leaf position within the tree. After this insertion,
 	 * no attempt is made to restructure or balance the tree. This tree will not
 	 * hold null references, nor duplicate data values.
-	 *
+	 * 
 	 * @param data to be added into this binary search tree
 	 * @return true if the value was inserted, false if not
 	 * @throws NullPointerException     when the provided data argument is null
@@ -141,7 +144,7 @@ public class SearchBackEnd<MovieData extends Comparable<MovieData>> implements S
 	 *                                  data references
 	 */
 
-	public boolean insert(MovieData data) throws NullPointerException, IllegalArgumentException {
+	public boolean insert(MovieDataInterface data) throws NullPointerException, IllegalArgumentException {
 		// null references cannot be stored within this tree
 		if (data == null)
 			throw new NullPointerException("This RedBlackTree cannot store null references.");
@@ -165,8 +168,18 @@ public class SearchBackEnd<MovieData extends Comparable<MovieData>> implements S
 
 	}
 
+	/**
+	 * Recursive helper method to find the subtree with a null reference in the
+	 * position that the newNode should be inserted, and then extend this tree by
+	 * the newNode in that position.
+	 * 
+	 * @param newNode is the new node that is being added to this tree
+	 * @param subtree is the reference to a node within this tree which the newNode
+	 *                should be inserted as a descenedent beneath
+	 * @return true is the value was inserted in subtree, false if not
+	 */
 	private boolean insertHelper(Node<MovieData> newNode, Node<MovieData> subtree) {
-		int compare = newNode.data.compareTo(subtree.data);
+		int compare = (Integer.toString(newNode.data.getRank())).compareTo(Integer.toString(subtree.data.getRank()));
 		// do not allow duplicate values to be stored within this tree
 		if (compare == 0)
 			return false;
@@ -203,7 +216,7 @@ public class SearchBackEnd<MovieData extends Comparable<MovieData>> implements S
 	 * provided parent, this method will perform a left rotation. When the provided
 	 * nodes are not related in one of these ways, this method will throw an
 	 * IllegalArgumentException.
-	 *
+	 * 
 	 * @param child  is the node being rotated from child to parent position
 	 *               (between these two node arguments)
 	 * @param parent is the node being rotated from parent to child position
@@ -283,12 +296,11 @@ public class SearchBackEnd<MovieData extends Comparable<MovieData>> implements S
 
 	@Override
 	public boolean containsMovie(MovieDataInterface movie) {
-		MovieData node;
 
-		if (contains((MovieData) movie.getTitle()) == true) {
+		if (contains(movie) == true) {
 			return true;
 		}
-// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -299,11 +311,131 @@ public class SearchBackEnd<MovieData extends Comparable<MovieData>> implements S
 	 * @returns List contain movie titles
 	 */
 	@Override
-
 	public List<String> findTitles(String movieRank) {
+		List<String> titles = new LinkedList<>();
+		lookupHelperTitles(movieRank, root, titles);
 
-// TODO Auto-generated method stub
-		return null;
+		if (size() == 0) {
+			throw new NoSuchElementException("No Movie");
+
+		}
+
+		else {
+			return titles;
+		}
+	}
+
+	/**
+	 * Helper to finds the titles at the specific node using movieRank as a key.
+	 *
+	 * @param movieRank key
+	 * @param current   node that is used to determine the node for the rank
+	 * @param titles    a list
+	 * @returns List contain movie titles
+	 */
+	protected void lookupHelperTitles(String movieRank, Node<MovieData> current, List<String> titles) {
+
+		if (current == null) {
+			return;
+		}
+		if (current != null) {
+			if (current.data.getRank() == Integer.parseInt(movieRank)) {
+				titles.add(current.data.getTitle());
+
+			}
+			lookupHelperTitles(movieRank, current.leftChild, titles);
+			lookupHelperTitles(movieRank, current.rightChild, titles);
+
+		}
+	}
+
+	/**
+	 * Finds the genre at the specific node using movieRank as a key.
+	 *
+	 * @param movieRank key
+	 * @returns List contain movie genre
+	 */
+	@Override
+	public List<String> findGenre(String movieRank) {
+		List<String> genre = new LinkedList<>();
+		lookupHelperGenre(movieRank, root, genre);
+
+		if (size() == 0) {
+			throw new NoSuchElementException("No Movie");
+
+		}
+
+		else {
+			return genre;
+		}
+	}
+/**
+	 * Helper to finds the titles at the specific node using movieRank as a key.
+	 *
+	 * @param movieRank key
+	 * @param current   node that is used to determine the node for the rank
+	 * @param genre     a list
+	 * @returns List contain movie genre
+	 */
+	protected void lookupHelperGenre(String movieRank, Node<MovieData> current, List<String> genre) {
+
+		if (current == null) {
+			return;
+		}
+		if (current != null) {
+			if (current.data.getRank() == Integer.parseInt(movieRank)) {
+				genre.add(current.data.getGenre());
+
+			}
+			lookupHelperGenre(movieRank, current.leftChild, genre);
+			lookupHelperGenre(movieRank, current.rightChild, genre);
+
+		}
+	}
+
+	/**
+	 * Finds the years at the specific node using movieRank as a key.
+	 *
+	 * @param movieRank key
+	 * @returns List contain movie year
+	 */
+	@Override
+	public List<String> findYear(String movieRank) {
+		List<String> years = new LinkedList<>();
+		lookupHelperYear(movieRank, root, years);
+
+		if (size() == 0) {
+			throw new NoSuchElementException("No Movie");
+
+		}
+
+		else {
+			return years;
+		}
+	}
+
+	/**
+	 * Helper to finds the year at the specific node using movieRank as a key.
+	 *
+	 * @param movieRank key
+	 * @param current   node that is used to determine the node for the rank
+	 * @param year      a list
+	 * @returns List contain movie year
+	 */
+	protected void lookupHelperYear(String movieRank, Node<MovieData> current, List<String> year) {
+
+		if (current == null) {
+			return;
+		}
+		if (current != null) {
+			if (current.data.getRank() == Integer.parseInt(movieRank)) {
+				year.add(Integer.toString(current.data.getYearPublished()));
+				return;
+			}
+			lookupHelperYear(movieRank, current.leftChild, year);
+			lookupHelperYear(movieRank, current.rightChild, year);
+
+		}
 	}
 
 	/**
@@ -313,10 +445,43 @@ public class SearchBackEnd<MovieData extends Comparable<MovieData>> implements S
 	 * @returns List contain director names
 	 */
 	@Override
-
 	public List<String> findDirector(String movieRank) {
 
-		return null;
+		List<String> directors = new LinkedList<>();
+		lookupHelperDirector(movieRank, root, directors);
+
+		if (size() == 0) {
+			throw new NoSuchElementException("No Movie");
+
+		}
+
+		else {
+			return directors;
+		}
+	}
+
+	/**
+	 * Helper to finds the directors at the specific node using movieRank as a key.
+	 *
+	 * @param movieRank key
+	 * @param current   node that is used to determine the node for the rank
+	 * @param directors a list
+	 * @returns List contain movie director name
+	 */
+	protected void lookupHelperDirector(String movieRank, Node<MovieData> current, List<String> directors) {
+
+		if (current == null) {
+			return;
+		}
+		if (current != null) {
+			if (current.data.getRank() == Integer.parseInt(movieRank)) {
+				directors.add(current.data.getDirector());
+				return;
+			}
+			lookupHelperDirector(movieRank, current.leftChild, directors);
+			lookupHelperDirector(movieRank, current.rightChild, directors);
+
+		}
 	}
 
 	/**
@@ -331,7 +496,7 @@ public class SearchBackEnd<MovieData extends Comparable<MovieData>> implements S
 
 	/**
 	 * Determines if RedBlack tree is empty or not. *
-	 *
+	 * 
 	 * @return true if tree is empty else returns false.
 	 */
 	@Override
@@ -341,38 +506,38 @@ public class SearchBackEnd<MovieData extends Comparable<MovieData>> implements S
 
 	/**
 	 * Checks whether the tree contains the value *data*.
-	 *
-	 * @param data the data value to test for
+	 * 
+	 * @param movie the data value to test for
 	 * @return true if *data* is in the tree, false if it is not in the tree
 	 */
 
-	public boolean contains(MovieData data) {
+	public boolean contains(MovieDataInterface movie) {
 		// null references will not be stored within this tree
-		if (data == null)
+		if (movie == null)
 			throw new NullPointerException("This RedBlackTree cannot store null references.");
-		return this.containsHelper(data, root);
+		return this.containsHelper(movie, root);
 	}
 
 	/**
 	 * Recursive helper method that recurses through the tree and looks for the
 	 * value *data*.
-	 *
-	 * @param data    the data value to look for
+	 * 
+	 * @param movie   the data value to look for
 	 * @param subtree the subtree to search through
 	 * @return true of the value is in the subtree, false if not
 	 */
-	private boolean containsHelper(MovieData data, Node<MovieData> subtree) {
+	private boolean containsHelper(MovieDataInterface movie, Node<MovieData> subtree) {
 		if (subtree == null) {
 			// we are at a null child, value is not in tree
 			return false;
 		} else {
-			int compare = data.compareTo(subtree.data);
+			int compare = Integer.toString(movie.getRank()).compareTo(Integer.toString(subtree.data.getRank()));
 			if (compare < 0) {
 				// go left in the tree
-				return containsHelper(data, subtree.leftChild);
+				return containsHelper(movie, subtree.leftChild);
 			} else if (compare > 0) {
 				// go right in the tree
-				return containsHelper(data, subtree.rightChild);
+				return containsHelper(movie, subtree.rightChild);
 			} else {
 				// we found it :)
 				return true;
@@ -380,6 +545,11 @@ public class SearchBackEnd<MovieData extends Comparable<MovieData>> implements S
 		}
 	}
 
+	/**
+	 * Returns an iterator over the values in in-order (sorted) order.
+	 * 
+	 * @return iterator object that traverses the tree in in-order sequence
+	 */
 	@Override
 	public Iterator<MovieData> iterator() {
 		// use an anonymous class here that implements the Iterator interface
@@ -394,7 +564,7 @@ public class SearchBackEnd<MovieData extends Comparable<MovieData>> implements S
 			/**
 			 * The next method is called for each value in the traversal sequence. It
 			 * returns one value at a time.
-			 *
+			 * 
 			 * @return next value in the sequence of the traversal
 			 * @throws NoSuchElementException if there is no more elements in the sequence
 			 */
@@ -417,7 +587,7 @@ public class SearchBackEnd<MovieData extends Comparable<MovieData>> implements S
 				if (!stack.isEmpty()) {
 					Node<MovieData> processedNode = stack.pop();
 					current = processedNode.rightChild;
-					return processedNode.data;
+					return (MovieData) processedNode.data;
 				} else {
 					// if the stack is empty, we are done with our traversal
 					throw new NoSuchElementException("There are no more elements in the tree");
@@ -428,7 +598,7 @@ public class SearchBackEnd<MovieData extends Comparable<MovieData>> implements S
 			/**
 			 * Returns a boolean that indicates if the iterator has more elements (true), or
 			 * if the traversal has finished (false)
-			 *
+			 * 
 			 * @return boolean indicating whether there are more elements / steps for the
 			 *         traversal
 			 */
@@ -446,7 +616,7 @@ public class SearchBackEnd<MovieData extends Comparable<MovieData>> implements S
 	 * Tree if needed. This is done in order to keep a balance RedBlack Tree. The
 	 * swapping of node colors and reordering is dependent on whether the uncle node
 	 * of the new Node is red or black.
-	 *
+	 * 
 	 * @param newNode the new Node that has just been inserted.
 	 */
 	private void enforceRBTreePropertiesAfterInsert(Node<MovieData> newNode) {
@@ -467,8 +637,11 @@ public class SearchBackEnd<MovieData extends Comparable<MovieData>> implements S
 			} else if (parentNode.isLeftChild() == false) {
 				uncleNode = grandparentNode.leftChild;
 			}
+			if (uncleNode == null) {
+				rotate(parentNode, grandparentNode);
+				enforceRBTreePropertiesAfterInsert(parentNode);
 
-			if (uncleNode.isBlack == false) { // if uncle node is red
+			} else if (uncleNode.isBlack == false) { // if uncle node is red
 				parentNode.isBlack = true;
 				uncleNode.isBlack = true;
 				grandparentNode.isBlack = false;
@@ -511,7 +684,7 @@ public class SearchBackEnd<MovieData extends Comparable<MovieData>> implements S
 	 * this RedBlackTree class implementation of toString generates an inorder
 	 * traversal. The toString of the Node class class above produces a level order
 	 * traversal of the nodes / values of the tree.
-	 *
+	 * 
 	 * @return string containing the ordered values of this tree (in-order
 	 *         traversal)
 	 */
@@ -539,43 +712,51 @@ public class SearchBackEnd<MovieData extends Comparable<MovieData>> implements S
 class SearchBackEndPlaceholder implements SearchBackEndInterface {
 	private MovieDataInterface onlyMovie;
 
-	/*
-	 * public void addMovie(MovieDataInterface movie) { this.onlyMovie = movie; }
-	 */
 	public boolean containsMovie(MovieDataInterface movie) {
 		return onlyMovie.equals(movie);
 	}
 
 	public List<String> findTitles(String movieRank) {
 		List<String> titles = new LinkedList<>();
-		if (onlyMovie.getTitle().contains(movieRank))
+		if (onlyMovie.getRank() == (Integer.parseInt(movieRank)))
 			titles.add(onlyMovie.getTitle());
 		return titles;
 	}
 
 	public List<String> findDirector(String movieRank) {
 		List<String> directors = new LinkedList<>();
-		if (onlyMovie.getDirector().contains(movieRank))
+		if (onlyMovie.getRank() == (Integer.parseInt(movieRank)))
 			directors.add(onlyMovie.getDirector());
 		return directors;
 	}
 
-	@Override
 	public Iterator iterator() {
-		// TODO Auto-generated method stub
+
 		return null;
 	}
 
-	@Override
 	public int size() {
-		// TODO Auto-generated method stub
+
 		return 0;
 	}
 
-	@Override
 	public boolean isEmpty() {
-		// TODO Auto-generated method stub
+
 		return false;
+	}
+
+	public List<String> findYear(String movieRank) {
+		List<String> years = new LinkedList<>();
+		if (onlyMovie.getRank() == (Integer.parseInt(movieRank)))
+			years.add(Integer.toString(onlyMovie.getYearPublished()));
+		return years;
+	}
+
+	public List<String> findGenre(String movieRank) {
+		List<String> genre = new LinkedList<>();
+		if (onlyMovie.getRank() == (Integer.parseInt(movieRank)))
+			genre.add(onlyMovie.getGenre());
+		return genre;
 	}
 
 }
