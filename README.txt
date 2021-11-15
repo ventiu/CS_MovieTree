@@ -24,13 +24,11 @@ Signature: <type full name to certify that the details above are truthful and co
 
 Back End Developer Section:
 ---------------------------
-@wisc.edu Email: <enter your email here>
-Files Written By: <list files you have written here>
+@wisc.edu Email: oghigian@wisc.edu
+Files Written By: SearchBackEnd.java
 Additional Contributions: <list any non-code contributions to team work here>
-Referenced Works: <cite any code not writen by you explicitly for this project here, for example:
-work reused from a previous course, examples taken from any website or book, or any other author,
-if none, explicitly replace this double quoted text with the word "none">
-Signature: <type full name to certify that the details above are truthful and complete>
+Referenced Works: Reference previous code for information about binary search. Code came from CS300 Project P09 Movie Catalog
+Signature: Julia Oghigian
 
 Front End Developer: 
 --------------------
