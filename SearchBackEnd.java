@@ -32,14 +32,14 @@ interface SearchBackEndInterface<T extends Comparable<T>> extends Iterable<T> {
 	 * @param movieRank key
 	 * @returns List contain director names
 	 */
-	List<String> findDirector(String movieRank);
+	String findDirector(int movieRank);
 	/**
 	 * Finds the titles at the specific node using movieRank as a key.
 	 *
 	 * @param movieRank key
 	 * @returns List contain movie titles
 	 */
-	List<String> findTitles(String movieRank);
+	String findTitles(int movieRank);
 	/**
 	 * Determines if a movie has been added to the tree.
 	 *
@@ -54,14 +54,14 @@ interface SearchBackEndInterface<T extends Comparable<T>> extends Iterable<T> {
 	 * @returns List contain movie titles
 	 */
 
-	List<String> findYear(String movieRank);
+	int findYear(int movieRank);
 	/**
 	 * Finds the genre at the specific node using movieRank as a key.
 	 *
 	 * @param movieRank key
 	 * @returns List contain movie titles
 	 */
-	List<String> findGenre(String movieRank);
+	String findGenre(int movieRank);
 	
 
 }
@@ -179,13 +179,13 @@ public class SearchBackEnd implements SearchBackEndInterface {
 	 * @return true is the value was inserted in subtree, false if not
 	 */
 	private boolean insertHelper(Node<MovieData> newNode, Node<MovieData> subtree) {
-		int compare = (Integer.toString(newNode.data.getRank())).compareTo(Integer.toString(subtree.data.getRank()));
+	//	int compare = (Integer.toString(newNode.data.getRank())).compareTo(Integer.toString(subtree.data.getRank()));
 		// do not allow duplicate values to be stored within this tree
-		if (compare == 0)
+		if (newNode.data.getRank() == subtree.data.getRank())
 			return false;
 
 		// store newNode within left subtree of subtree
-		else if (compare < 0) {
+		else if (newNode.data.getRank() < subtree.data.getRank()) {
 			if (subtree.leftChild == null) { // left subtree empty, add here
 				subtree.leftChild = newNode;
 				newNode.parent = subtree;
@@ -305,15 +305,15 @@ public class SearchBackEnd implements SearchBackEndInterface {
 	}
 
 	/**
-	 * Finds the titles at the specific node using movieRank as a key.
+	 * Finds the titles of the specific node using movieRank as a key.
 	 *
 	 * @param movieRank key
-	 * @returns List contain movie titles
+	 * @returns string  containing movie title
 	 */
 	@Override
-	public List<String> findTitles(String movieRank) {
-		List<String> titles = new LinkedList<>();
-		lookupHelperTitles(movieRank, root, titles);
+	public String findTitles(int movieRank) {
+		
+		lookupHelper(movieRank, root);
 
 		if (size() == 0) {
 			throw new NoSuchElementException("No Movie");
@@ -321,44 +321,45 @@ public class SearchBackEnd implements SearchBackEndInterface {
 		}
 
 		else {
-			return titles;
+			return root.data.getTitle();
 		}
 	}
 
 	/**
-	 * Helper to finds the titles at the specific node using movieRank as a key.
+	 * Helper to finds the specific node using movieRank as a key.
 	 *
 	 * @param movieRank key
 	 * @param current   node that is used to determine the node for the rank
-	 * @param titles    a list
-	 * @returns List contain movie titles
+	 * @returns Node    that is where the movieRank is located
 	 */
-	protected void lookupHelperTitles(String movieRank, Node<MovieData> current, List<String> titles) {
-
+	protected Node<MovieData> lookupHelper(int movieRank, Node<MovieData> current) {
 		if (current == null) {
-			return;
+			return null;
 		}
-		if (current != null) {
-			if (current.data.getRank() == Integer.parseInt(movieRank)) {
-				titles.add(current.data.getTitle());
+		while (current != null) {
+			if (current.data.getRank() == movieRank) {
+
+				return current;
+
+			} else if (current.data.getRank() > (movieRank)) {
+				lookupHelper(movieRank, current.leftChild);
+			} else if (current.data.getRank() < (movieRank)) {
+				lookupHelper(movieRank, current.rightChild);
 
 			}
-			lookupHelperTitles(movieRank, current.leftChild, titles);
-			lookupHelperTitles(movieRank, current.rightChild, titles);
-
 		}
+		return current;
 	}
 
 	/**
 	 * Finds the genre at the specific node using movieRank as a key.
 	 *
 	 * @param movieRank key
-	 * @returns List contain movie genre
+	 * @returns String contain movie genre
 	 */
 	@Override
-	public List<String> findGenre(String movieRank) {
-		List<String> genre = new LinkedList<>();
-		lookupHelperGenre(movieRank, root, genre);
+	public String findGenre(int movieRank) {
+		lookupHelperGenre(movieRank, root);
 
 		if (size() == 0) {
 			throw new NoSuchElementException("No Movie");
@@ -366,43 +367,21 @@ public class SearchBackEnd implements SearchBackEndInterface {
 		}
 
 		else {
-			return genre;
+			return root.data.getGenre();
 		}
 	}
-/**
-	 * Helper to finds the titles at the specific node using movieRank as a key.
-	 *
-	 * @param movieRank key
-	 * @param current   node that is used to determine the node for the rank
-	 * @param genre     a list
-	 * @returns List contain movie genre
-	 */
-	protected void lookupHelperGenre(String movieRank, Node<MovieData> current, List<String> genre) {
 
-		if (current == null) {
-			return;
-		}
-		if (current != null) {
-			if (current.data.getRank() == Integer.parseInt(movieRank)) {
-				genre.add(current.data.getGenre());
-
-			}
-			lookupHelperGenre(movieRank, current.leftChild, genre);
-			lookupHelperGenre(movieRank, current.rightChild, genre);
-
-		}
-	}
 
 	/**
-	 * Finds the years at the specific node using movieRank as a key.
+	 * Finds the year published at the specific node using movieRank as a key.
 	 *
 	 * @param movieRank key
-	 * @returns List contain movie year
+	 * @returns String contain movie year
 	 */
 	@Override
-	public List<String> findYear(String movieRank) {
-		List<String> years = new LinkedList<>();
-		lookupHelperYear(movieRank, root, years);
+	public int findYear(int movieRank) {
+		
+		lookupHelper(movieRank, root);
 
 		if (size() == 0) {
 			throw new NoSuchElementException("No Movie");
@@ -410,45 +389,21 @@ public class SearchBackEnd implements SearchBackEndInterface {
 		}
 
 		else {
-			return years;
+			return root.data.getYearPublished();
 		}
 	}
 
-	/**
-	 * Helper to finds the year at the specific node using movieRank as a key.
-	 *
-	 * @param movieRank key
-	 * @param current   node that is used to determine the node for the rank
-	 * @param year      a list
-	 * @returns List contain movie year
-	 */
-	protected void lookupHelperYear(String movieRank, Node<MovieData> current, List<String> year) {
-
-		if (current == null) {
-			return;
-		}
-		if (current != null) {
-			if (current.data.getRank() == Integer.parseInt(movieRank)) {
-				year.add(Integer.toString(current.data.getYearPublished()));
-				return;
-			}
-			lookupHelperYear(movieRank, current.leftChild, year);
-			lookupHelperYear(movieRank, current.rightChild, year);
-
-		}
-	}
 
 	/**
 	 * Finds the director at the specific node using movieRank as a key.
 	 *
 	 * @param movieRank key
-	 * @returns List contain director names
+	 * @returns String contain director names
 	 */
 	@Override
-	public List<String> findDirector(String movieRank) {
+	public String findDirector(int movieRank) {
 
-		List<String> directors = new LinkedList<>();
-		lookupHelperDirector(movieRank, root, directors);
+		lookupHelper(movieRank, root);
 
 		if (size() == 0) {
 			throw new NoSuchElementException("No Movie");
@@ -456,33 +411,11 @@ public class SearchBackEnd implements SearchBackEndInterface {
 		}
 
 		else {
-			return directors;
+			return root.data.getDirector();
 		}
 	}
 
-	/**
-	 * Helper to finds the directors at the specific node using movieRank as a key.
-	 *
-	 * @param movieRank key
-	 * @param current   node that is used to determine the node for the rank
-	 * @param directors a list
-	 * @returns List contain movie director name
-	 */
-	protected void lookupHelperDirector(String movieRank, Node<MovieData> current, List<String> directors) {
 
-		if (current == null) {
-			return;
-		}
-		if (current != null) {
-			if (current.data.getRank() == Integer.parseInt(movieRank)) {
-				directors.add(current.data.getDirector());
-				return;
-			}
-			lookupHelperDirector(movieRank, current.leftChild, directors);
-			lookupHelperDirector(movieRank, current.rightChild, directors);
-
-		}
-	}
 
 	/**
 	 * Finds the size of the tree.
@@ -716,20 +649,17 @@ class SearchBackEndPlaceholder implements SearchBackEndInterface {
 		return onlyMovie.equals(movie);
 	}
 
-	public List<String> findTitles(String movieRank) {
-		List<String> titles = new LinkedList<>();
-		if (onlyMovie.getRank() == (Integer.parseInt(movieRank)))
-			titles.add(onlyMovie.getTitle());
-		return titles;
+	public String findTitles(int movieRank) {
+		if (onlyMovie.getRank() == (movieRank))
+			return onlyMovie.getTitle();
+		return null;
 	}
 
-	public List<String> findDirector(String movieRank) {
-		List<String> directors = new LinkedList<>();
-		if (onlyMovie.getRank() == (Integer.parseInt(movieRank)))
-			directors.add(onlyMovie.getDirector());
-		return directors;
+	public String findDirector(int movieRank) {
+		if (onlyMovie.getRank() == (movieRank))
+			return onlyMovie.getDirector();
+		return null;
 	}
-
 	public Iterator iterator() {
 
 		return null;
@@ -745,19 +675,18 @@ class SearchBackEndPlaceholder implements SearchBackEndInterface {
 		return false;
 	}
 
-	public List<String> findYear(String movieRank) {
-		List<String> years = new LinkedList<>();
-		if (onlyMovie.getRank() == (Integer.parseInt(movieRank)))
-			years.add(Integer.toString(onlyMovie.getYearPublished()));
-		return years;
+        public int findYear(int movieRank) {
+		if (onlyMovie.getRank() == movieRank)
+			return onlyMovie.getYearPublished();
+		return 0;
 	}
 
-	public List<String> findGenre(String movieRank) {
-		List<String> genre = new LinkedList<>();
-		if (onlyMovie.getRank() == (Integer.parseInt(movieRank)))
-			genre.add(onlyMovie.getGenre());
-		return genre;
+	public String findGenre(int movieRank) {
+		if (onlyMovie.getRank() == (movieRank))
+			return onlyMovie.getGenre();
+		return null;
 	}
+	
 
 }
 
