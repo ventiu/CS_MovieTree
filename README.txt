@@ -4,12 +4,11 @@ TEAM: red
 
 Things that went well for this team through project two:
 --------------------------------------------------------
-<describe a few things that your team handled well through this second project>
+Communication was open and frequent and people responded in a timely manner. Everyone was open to constructive critisism and tried their best.
 
 Things that could be improved through future projects:
 ------------------------------------------------------
-<describe a few things that your team can improve upon for project three>
-
+Try to split the work more evenly so that one person is less overwhelmed. Have the interfaces be more clear and have more functions.
 
 Data Wrangler Section:
 ----------------------
@@ -42,6 +41,6 @@ Integration Manager:
 --------------------
 @wisc.edu Email: kashton@wisc.edu
 Files Written By: MovieSearchApp.java Makefile MovieSearchTests.java 
-Additional Contributions: <list any non-code contributions to team work here>
-Referenced Works: "none"
+Additional Contributions: I provided help with other portions of the project with pseudocode and algorithm design help
+Referenced Works: Instructions for how to modify the System.in in JUnit tests from https://stackoverflow.com/questions/31635698/junit-testing-for-user-input-using
 Signature: Emma Ashton

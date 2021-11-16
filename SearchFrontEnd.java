@@ -52,8 +52,8 @@ public class SearchFrontEnd implements SearchFrontEndInterface {
     // Get the whole menu of that movie tree
     @Override
     public void menu(){
-		while (true){
             Scanner scnr = new Scanner(System.in);
+		while (true){
 			System.out.println("Movie Tree Menu");
 			System.out.println("1. Entering a rank to get a trivia question asked");
 			System.out.println("2. Entering in their own movies with ranks that are above 1000");

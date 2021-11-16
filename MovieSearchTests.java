@@ -1,10 +1,18 @@
 import java.io.FileNotFoundException;
 import java.util.LinkedList;
 import java.util.List;
+import java.io.InputStream;
+import java.io.ByteArrayInputStream;
+// --== CS400 Project Two File Header ==--
+// Name: Emma Ashton
+// Email: kashton@wisc.edu
+// Team: Red
+// Group: BA
+// TA: Cameron Ruggles
+// Lecturer: Gary Dahl
+// Notes to Grader: <optional extra notes>
 
 import org.junit.jupiter.api.Test;
-
-
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -284,8 +292,67 @@ public class MovieSearchTests {
       
       
     // Front End Developer Tests
+/**
+       * This tests the inserting of new movies into the list from the ui. It first adds a movie that already exists and makes
+       * sure that it isn't overwritten. Then it adds a new movie and makes sure it was actually added to the list
+       */
+      @Test
+      public void testInsertUI()
+      {
+          SearchBackEnd engine = new SearchBackEnd();
+          SearchFrontEndInterface ui = new SearchFrontEnd();
+          engine.insert(new MovieData(0, 100, "", "", ""));
+          
+          String input = "2\n0\n1\na\nb\nc\n1\n1\na\nb\nc\n3\n";
+          InputStream in = new ByteArrayInputStream(input.getBytes());
+          System.setIn(in);
+          
+          ui.run(engine);
+          
+          assertEquals(engine.findYear(0), 100);
+          assertEquals(engine.contains(1), true);
+      }
+      
+      /**
+       * This tests the trivia portion of the ui. First it answers the trivia question correctly and makes sure the score was increased
+       * then it answers the questions wrong and makes sure the score is not increased.
+       * @throws FileNotFoundException
+       */
+      @Test
+      public void testTrivia() throws FileNotFoundException
+      {
+    	  List<MovieDataInterface> movies = new MovieLoader().loadAllFilesInDirectory("DWTests/TestDir1/");
+          SearchBackEnd engine = new SearchBackEnd();
+          for(MovieDataInterface movie : movies) engine.insert(movie);
+          SearchFrontEnd ui = new SearchFrontEnd();
+          
+          String input = "1\n1\n2014\nJames Gunn\nAction\n3\n";
+          InputStream in = new ByteArrayInputStream(input.getBytes());
+          System.setIn(in);
+          ui.run(engine);
+          assertEquals(1, ui.score());
 
-	  // Integration Manager Tests
+          input = "1\n1\n0\nPerson\nGenre\n3\n";
+          in = new ByteArrayInputStream(input.getBytes());
+          System.setIn(in);
+          ui.run(engine);
+          assertEquals(1, ui.score());
+      }
+      
+      /**
+       * This tests the string compare method. It makes sure case is ignored, and makes sure that it counts any element from a
+       * list is counted. It also checks that a string that is the correct answer plus some is not counted and that a string that is the
+       *  correct answer minus some is not counted
+       */
+      @Test
+      public void testStringCompare()
+      {
+    	  SearchFrontEnd ui = new SearchFrontEnd();
+    	  assertEquals(true, ui.stringCompare("hi", "HI"));
+    	  assertEquals(true, ui.stringCompare("comedy", "comedy,tragedy"));
+    	  assertEquals(false, ui.stringCompare("thing1", "thing"));
+    	  assertEquals(false, ui.stringCompare("t", "tt,ttt,tttt"));
+      }
 
 
 }

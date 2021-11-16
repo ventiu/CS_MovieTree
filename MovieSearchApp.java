@@ -1,5 +1,12 @@
 import java.util.List;
-  
+// --== CS400 Project Two File Header ==--
+// Name: Emma Ashton
+// Email: kashton@wisc.edu
+// Team: Red
+// Group: BA
+// TA: Cameron Ruggles
+// Lecturer: Gary Dahl
+// Notes to Grader: <optional extra notes>  
 public class MovieSearchApp {
 
     public static void main(String[] args) throws Exception {
