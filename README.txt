@@ -33,11 +33,9 @@ Signature: Julia Oghigian
 Front End Developer: 
 --------------------
 @wisc.edu Email: twen22@wisc.edu
-Files Written By: <list files you have written here>
+Files Written By: SearchFrontEnd.java
 Additional Contributions: <list any non-code contributions to team work here>
-Referenced Works: <cite any code not writen by you explicitly for this project here, for example:
-work reused from a previous course, examples taken from any website or book, or any other author,
-if none, explicitly replace this double quoted text with the word "none">
+Referenced Works: get similarity ratio borrows from https://www.codeleading.com/article/92841198406/ 
 Signature: Tianyou Wen
 
 Integration Manager:
