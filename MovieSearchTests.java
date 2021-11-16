@@ -214,7 +214,7 @@ public class MovieSearchTests {
               redBlackTree.insert(data3);
               List<String> list = new LinkedList();
               list.add(data1.getDirector());
-              assertEquals(list, redBlackTree.findDirector("2"));
+              assertEquals(list, redBlackTree.findDirector(2));
       }
 
       /**
