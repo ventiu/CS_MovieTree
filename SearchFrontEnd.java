@@ -44,7 +44,6 @@ public class SearchFrontEnd implements SearchFrontEndInterface {
     private SearchBackEndInterface backEndInterface;
     private SearchBackEndInterface searchBackEndPlaceholder;
     private int score = 0;
-    private int rank = 1000;
     @Override
     public void run(SearchBackEndInterface searchEngine) {
         this.backEndInterface = searchEngine;
@@ -75,8 +74,9 @@ public class SearchFrontEnd implements SearchFrontEndInterface {
                 while(!rank_bo){
                     try {
                         rank = scnr.nextInt();
-                        if (rank > this.rank){
-                            System.out.println("Sorry, rank has to be less than " + this.rank + ". \nPlease choose a smaller number");
+                        MovieDataInterface rank_movie = new MovieData(rank, 1, "", "", "");
+                        if (!backEndInterface.containsMovie(rank_movie)) {
+                            System.out.println("Sorry, that rank is not exist, please try another one");
                             continue;
                         }
                         rank_bo = true;
@@ -149,12 +149,12 @@ public class SearchFrontEnd implements SearchFrontEndInterface {
                 while(!rank_bo){
                     try{
                         rank = scnr.nextInt();
-                        if (rank <= this.rank){
-                            System.out.println("Sorry, rank has to be bigger than " + this.rank + ". \nPlease choose a bigger number");
+                        MovieDataInterface rank_movie = new MovieData(rank, 1, "", "", "");
+                        if (backEndInterface.containsMovie(rank_movie)) {
+                            System.out.println("Sorry, that rank is already used, please try another one");
                             continue;
                         }
                         rank_bo = true;
-                        this.rank = rank;
                     }
                     catch ( InputMismatchException e){
                         System.out.println("Noninteger value included in Rank. Please Start Over.");
