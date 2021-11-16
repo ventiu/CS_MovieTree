@@ -112,7 +112,7 @@ public class SearchFrontEnd implements SearchFrontEndInterface {
                 scnr.nextLine();
                 System.out.println("Please guess the movie's Director:");
                 String director = scnr.nextLine();
-                if (getSimilarityRatio(director, backEndInterface.findDirector(rank)) >= 0.5) {
+                if (stringCompare(director, backEndInterface.findDirector(rank))) {
                     System.out.println("Congratulations, you are guessing correct");
                     count++;
                 }
@@ -122,7 +122,7 @@ public class SearchFrontEnd implements SearchFrontEndInterface {
                 }
                 System.out.println("Please guess the movie's Gerne:");
                 String gerne = scnr.nextLine();
-                if (getSimilarityRatio(gerne, backEndInterface.findGenre(rank)) >= 0.25) {
+                if (stringCompare(gerne, backEndInterface.findGenre(rank))) {
                     System.out.println("Congratulations, you are guessing correct");
                     count++;
                 }
@@ -208,63 +208,22 @@ public class SearchFrontEnd implements SearchFrontEndInterface {
     public int score() {
         return this.score;
     }
-
-    private int compare(String str, String target) {
-        int d[][];              // matrix
-        int n = str.length();
-        int m = target.length();
-        int i;                  // for str
-        int j;                  // for target
-        char ch1;               // for str
-        char ch2;               // for target
-        int temp;               // record same letter, could be 0/1
-        if (n == 0) {
-            return m;
-        }
-        if (m == 0) {
-            return n;
-        }
-        d = new int[n + 1][m + 1];
-        // Initialize the first column
-        for (i = 0; i <= n; i++) {
-            d[i][0] = i;
-        }
-        // Initialize the first row
-        for (j = 0; j <= m; j++) {
-            d[0][j] = j;
-        }
-        for (i = 1; i <= n; i++) {
-            // Check the whole str
-            ch1 = str.charAt(i - 1);
-            // match str to target
-            for (j = 1; j <= m; j++) {
-                ch2 = target.charAt(j - 1);
-                if (ch1 == ch2 || ch1 == ch2 + 32 || ch1 + 32 == ch2) {
-                    temp = 0;
-                } else {
-                    temp = 1;
-                }
-                // left+1,above+1, get the min of temp + left above corner
-                d[i][j] = min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + temp);
+    /**
+     * 
+     * @param str the user input string
+     * @param target the target string
+     * @return true, if the input string contains target string, false else.
+     */
+    public boolean stringCompare(String str, String target) {
+        String[] str2 = str.split("\\s+|;|,");
+        String[] target2 = target.split("\\s+|;|,");
+        for (int i = 0; i < str2.length; i++){
+            for (int j = 0; j < target2.length; j++){
+                if (str2[i].equalsIgnoreCase(target2[j])) return true;
+                System.out.println(str2[i] + " $$ " + target2[j]);
             }
         }
-        return d[n][m];
-    }
- 
- 
-    /**
-     * get the minimum value
-     */
-    private int min(int one, int two, int three) {
-        return (one = one < two ? one : two) < three ? one : three;
-    }
- 
-    /**
-     * get the percentage of similarity
-     */
-    public float getSimilarityRatio(String str, String target) {
-        int max = Math.max(str.length(), target.length());
-        return 1 - (float) compare(str, target) / max;
+        return false;
     }
 
 }
