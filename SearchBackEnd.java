@@ -63,6 +63,8 @@ interface SearchBackEndInterface<T extends Comparable<T>> extends Iterable<T> {
 	 */
 	String findGenre(int movieRank);
 	
+	boolean insert(MovieDataInterface movie);
+	
 
 }
 /**
@@ -297,7 +299,7 @@ public class SearchBackEnd implements SearchBackEndInterface {
 	@Override
 	public boolean containsMovie(MovieDataInterface movie) {
 
-		if (contains(movie) == true) {
+		if (contains(movie.getRank()) == true) {
 			return true;
 		}
 
@@ -313,16 +315,9 @@ public class SearchBackEnd implements SearchBackEndInterface {
 	@Override
 	public String findTitles(int movieRank) {
 		
-		lookupHelper(movieRank, root);
-
-		if (size() == 0) {
-			throw new NoSuchElementException("No Movie");
-
-		}
-
-		else {
-			return root.data.getTitle();
-		}
+		Node<MovieData> output = lookupHelper(movieRank, root);
+		if (output == null) {return null;}
+		return output.data.getTitle();
 	}
 
 	/**
@@ -333,22 +328,16 @@ public class SearchBackEnd implements SearchBackEndInterface {
 	 * @returns Node    that is where the movieRank is located
 	 */
 	protected Node<MovieData> lookupHelper(int movieRank, Node<MovieData> current) {
-		if (current == null) {
-			return null;
+		if (current.data.getRank() == movieRank) {
+			return current;
+
+		} else if (current.data.getRank() > (movieRank)) {
+			return lookupHelper(movieRank, current.leftChild);
+		} else if (current.data.getRank() < (movieRank)) {
+			return lookupHelper(movieRank, current.rightChild);
 		}
-		while (current != null) {
-			if (current.data.getRank() == movieRank) {
 
-				return current;
-
-			} else if (current.data.getRank() > (movieRank)) {
-				lookupHelper(movieRank, current.leftChild);
-			} else if (current.data.getRank() < (movieRank)) {
-				lookupHelper(movieRank, current.rightChild);
-
-			}
-		}
-		return current;
+		return null;
 	}
 
 	/**
@@ -359,16 +348,9 @@ public class SearchBackEnd implements SearchBackEndInterface {
 	 */
 	@Override
 	public String findGenre(int movieRank) {
-		lookupHelperGenre(movieRank, root);
-
-		if (size() == 0) {
-			throw new NoSuchElementException("No Movie");
-
-		}
-
-		else {
-			return root.data.getGenre();
-		}
+		Node<MovieData> output = lookupHelper(movieRank, root);
+		if (output == null) {return null;}
+		return output.data.getGenre();
 	}
 
 
@@ -380,17 +362,9 @@ public class SearchBackEnd implements SearchBackEndInterface {
 	 */
 	@Override
 	public int findYear(int movieRank) {
-		
-		lookupHelper(movieRank, root);
-
-		if (size() == 0) {
-			throw new NoSuchElementException("No Movie");
-
-		}
-
-		else {
-			return root.data.getYearPublished();
-		}
+		Node<MovieData> output = lookupHelper(movieRank, root);
+		if (output == null) {return -1;}
+		return output.data.getYearPublished();
 	}
 
 
@@ -402,17 +376,9 @@ public class SearchBackEnd implements SearchBackEndInterface {
 	 */
 	@Override
 	public String findDirector(int movieRank) {
-
-		lookupHelper(movieRank, root);
-
-		if (size() == 0) {
-			throw new NoSuchElementException("No Movie");
-
-		}
-
-		else {
-			return root.data.getDirector();
-		}
+		Node<MovieData> output = lookupHelper(movieRank, root);
+		if (output == null) {return null;}
+		return output.data.getDirector();
 	}
 
 
@@ -444,11 +410,9 @@ public class SearchBackEnd implements SearchBackEndInterface {
 	 * @return true if *data* is in the tree, false if it is not in the tree
 	 */
 
-	public boolean contains(MovieDataInterface movie) {
+	public boolean contains(int rank) {
 		// null references will not be stored within this tree
-		if (movie == null)
-			throw new NullPointerException("This RedBlackTree cannot store null references.");
-		return this.containsHelper(movie, root);
+		return this.containsHelper(rank, root);
 	}
 
 	/**
@@ -459,18 +423,18 @@ public class SearchBackEnd implements SearchBackEndInterface {
 	 * @param subtree the subtree to search through
 	 * @return true of the value is in the subtree, false if not
 	 */
-	private boolean containsHelper(MovieDataInterface movie, Node<MovieData> subtree) {
+	private boolean containsHelper(int rank, Node<MovieData> subtree) {
 		if (subtree == null) {
 			// we are at a null child, value is not in tree
 			return false;
 		} else {
-			int compare = Integer.toString(movie.getRank()).compareTo(Integer.toString(subtree.data.getRank()));
+			int compare = rank-subtree.data.getRank();
 			if (compare < 0) {
 				// go left in the tree
-				return containsHelper(movie, subtree.leftChild);
+				return containsHelper(rank, subtree.leftChild);
 			} else if (compare > 0) {
 				// go right in the tree
-				return containsHelper(movie, subtree.rightChild);
+				return containsHelper(rank, subtree.rightChild);
 			} else {
 				// we found it :)
 				return true;
@@ -687,6 +651,11 @@ class SearchBackEndPlaceholder implements SearchBackEndInterface {
 		return null;
 	}
 	
+	public boolean insert(MovieDataInterface movie)
+	{
+		return true;
+	}
 
 }
+
 

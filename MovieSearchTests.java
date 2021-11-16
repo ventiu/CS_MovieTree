@@ -3,6 +3,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+
+
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -13,7 +15,6 @@ public class MovieSearchTests {
      * This method tests the MovieLoaders ability to read from a directory accurately.
      * @throws FileNotFoundException
      */
-    @SuppressWarnings("unchecked")
     @Test
     public void testReadDirectory() throws FileNotFoundException {
 	    MovieLoader tester = new MovieLoader();
@@ -46,8 +47,7 @@ public class MovieSearchTests {
      * @return Boolean of successful completion(True), else False.
      */
 	  @Test 
-	@SuppressWarnings("unchecked")  
-	public void testReadCSVLine() { 
+	  public void testReadCSVLine() { 
 		  MovieLoader tester = new MovieLoader();
 		  String test1 = "1,2,3";
 	  
@@ -79,7 +79,6 @@ public class MovieSearchTests {
      * This method tests the MovieLoaders ability to accurately read a CSV file by testing against the first three lines.
      * @throws FileNotFoundException
      */
-	@SuppressWarnings("unchecked")
 	  @Test 
 	  public void testReadFile() throws FileNotFoundException { 
 		  MovieLoader tester = new MovieLoader();
@@ -117,8 +116,6 @@ public class MovieSearchTests {
 	   * This test reads a directory containing multiple files and checks to see if the list is the correct length
 	   * @throws FileNotFoundException
 	   */
-
-	@SuppressWarnings("unchecked")
 	  @Test
 	  public void testMultipleFiles() throws FileNotFoundException{
 		  MovieLoader tester = new MovieLoader();
@@ -126,7 +123,7 @@ public class MovieSearchTests {
 		  assertEquals(2000,test1.size());
 	  }
     // Back End Developer Tests
-/**
+	  /**
        * JUnit5 test that tests inserting red uncle, and double checks that the correct nodes end up in the correct locations in the tree.
        */
       @Test
@@ -212,9 +209,8 @@ public class MovieSearchTests {
               redBlackTree.insert(data2);
               MovieData data3 = new MovieData(4, 2000, "X-Men", "Action", "Byran Singer");
               redBlackTree.insert(data3);
-              List<String> list = new LinkedList();
-              list.add(data1.getDirector());
-              assertEquals(list, redBlackTree.findDirector(2));
+
+              assertEquals("Sam Raimi", redBlackTree.findDirector(2));
       }
 
       /**
@@ -236,9 +232,9 @@ public class MovieSearchTests {
           redBlackTree.insert(data3);
           redBlackTree.insert(data4);
           
-          assertEquals(redBlackTree.contains(data), true);
-          assertEquals(redBlackTree.contains(data3), true);
-          assertEquals(redBlackTree.contains(new MovieData(100, 1, "", "", "")), false);
+          assertEquals(redBlackTree.contains(data.getRank()), true);
+          assertEquals(redBlackTree.contains(data3.getRank()), true);
+          assertEquals(redBlackTree.contains(-10), false);
       }
       
       /**
@@ -280,12 +276,16 @@ public class MovieSearchTests {
     	  
     	  if(subtree == null) {return;}
     	  traverse(output, subtree.leftChild);
+
     	  output[subtree.data.getRank() - 1] = true;
     	  
     	  traverse(output, subtree.rightChild);
-      }	
-// Front End Developer Tests
+      }
+      
+      
+    // Front End Developer Tests
 
+	  // Integration Manager Tests
 
 
 }

@@ -68,23 +68,29 @@ public class SearchFrontEnd implements SearchFrontEndInterface {
                 System.out.println("If at least two of them are 80% correct, you will earn 1 point");
                 System.out.println("Current Score: " + score);
                 System.out.println("Enter a rank: ");
-                int rank2 = 0;
+                int rank = 0;
                 // get the next input as rank
                 try {
-                    rank2 = scnr.nextInt();
+                    rank = scnr.nextInt();
                 }
                 catch (InputMismatchException e){
                     System.out.println("The rank has to be an integer, please try again");
                     continue;
                 }
-                String rank = String.valueOf(rank2);
                 System.out.println("Movie Title is: " + backEndInterface.findTitles(rank));
 
 
                 System.out.println("Please guess the movie's Year:");
-                String year = scnr.next();
-                if (year.equals(backEndInterface.findYear(rank))) {
-                    System.out.println("Congradulation, you are guessing correct");
+                int year = 0;
+                try {
+                    year = scnr.nextInt();
+                }
+                catch (InputMismatchException e){
+                    System.out.println("The year has to be an integer, please try again");
+                    continue;
+                }
+                if (year == backEndInterface.findYear(rank)) {
+                    System.out.println("Congratulations, you are guessing correct");
                     count++;
                 }
                 else {
@@ -95,7 +101,7 @@ public class SearchFrontEnd implements SearchFrontEndInterface {
                 System.out.println("Please guess the movie's Director:");
                 String director = scnr.nextLine();
                 if (director.equals(backEndInterface.findDirector(rank))) {
-                    System.out.println("Congradulation, you are guessing correct");
+                    System.out.println("Congratulations, you are guessing correct");
                     count++;
                 }
                 else {
@@ -105,7 +111,7 @@ public class SearchFrontEnd implements SearchFrontEndInterface {
                 System.out.println("Please guess the movie's Gerne:");
                 String gerne = scnr.nextLine();
                 if (gerne.equals(backEndInterface.findGenre(rank))) {
-                    System.out.println("Congradulation, you are guessing correct");
+                    System.out.println("Congratulations, you are guessing correct");
                     count++;
                 }
                 else {
@@ -116,7 +122,7 @@ public class SearchFrontEnd implements SearchFrontEndInterface {
                 // if true, score + 1
                 // else System.out.println("Sorry, you are guessing wrong")
                 if (count >= 2) {
-                    System.out.println("Congradulation, your guessing correct percentage is more than 60%, score+1");
+                    System.out.println("Congratulations, your guessing correct percentage is more than 60%, score + 1");
                     this.score++;
                 }
                 else System.out.println("Sorry, your guessing correct percentage is less than 60%");
@@ -148,9 +154,9 @@ public class SearchFrontEnd implements SearchFrontEndInterface {
                 String title = scnr.nextLine();
                 System.out.println("Please insert a movie director");
                 String Director = scnr.nextLine();
-                MovieData movie = new MovieData(rank, year, title, genre, Director);
+                MovieDataInterface movie = new MovieData(rank, year, title, genre, Director);
 
-                //backEndInterface.insert(movie);
+                backEndInterface.insert(movie);
                 continue;
             }
             else if (result.equals("3")){
@@ -180,3 +186,4 @@ class SearchFrontEndPlaceholder implements SearchFrontEndInterface {
 
 
 }*/
+
