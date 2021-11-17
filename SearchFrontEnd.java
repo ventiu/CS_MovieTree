@@ -44,12 +44,21 @@ public class SearchFrontEnd implements SearchFrontEndInterface {
     private SearchBackEndInterface backEndInterface;
     private SearchBackEndInterface searchBackEndPlaceholder;
     private int score = 0;
+    /**
+	 * Runs the command menu.
+	 * 
+	 * @param searchEngine a new SearchBackEndInterface
+	 */
     @Override
     public void run(SearchBackEndInterface searchEngine) {
         this.backEndInterface = searchEngine;
 		menu();
     }
-    // Get the whole menu of that movie tree
+    /**
+     * Get the whole menu of that movie tree
+     * Print how the game works
+     * Score + 1 when the user is guessing correct
+     */ 
     @Override
     public void menu(){
             Scanner scnr = new Scanner(System.in);
@@ -74,6 +83,7 @@ public class SearchFrontEnd implements SearchFrontEndInterface {
                 while(!rank_bo){
                     try {
                         rank = scnr.nextInt();
+                        // set rank with a movie
                         MovieDataInterface rank_movie = new MovieData(rank, 1, "", "", "");
                         if (!backEndInterface.containsMovie(rank_movie)) {
                             System.out.println("Sorry, that rank is not exist, please try another one");
@@ -86,8 +96,9 @@ public class SearchFrontEnd implements SearchFrontEndInterface {
                         scnr.nextLine();
                     }
                 }
-                
+                // print out the movie title
                 System.out.println("Movie Title is: " + backEndInterface.findTitles(rank));
+                // ask for the movie year
                 System.out.println("Please guess the movie's Year:");
                 int year = 0;
                 boolean year_bo = false;
@@ -101,6 +112,7 @@ public class SearchFrontEnd implements SearchFrontEndInterface {
                         scnr.nextLine();
                     }
                 }
+                // print congradulations when the user is guessing correct and sorry else
                 if (year == backEndInterface.findYear(rank)) {
                     System.out.println("Congratulations, you are guessing correct");
                     count++;
@@ -110,8 +122,10 @@ public class SearchFrontEnd implements SearchFrontEndInterface {
                     + backEndInterface.findYear(rank));
                 }
                 scnr.nextLine();
+                // ask for the movie director
                 System.out.println("Please guess the movie's Director:");
                 String director = scnr.nextLine();
+                // print congradulations when the user is guessing correct and sorry else
                 if (stringCompare(director, backEndInterface.findDirector(rank))) {
                     System.out.println("Congratulations, you are guessing correct");
                     count++;
@@ -120,8 +134,10 @@ public class SearchFrontEnd implements SearchFrontEndInterface {
                     System.out.println("Sorry, you are guessing incorrect, the correct answer is: " 
                     + backEndInterface.findDirector(rank));
                 }
+                // ask for the movie genre
                 System.out.println("Please guess the movie's Gerne:");
                 String gerne = scnr.nextLine();
+                // print congradulations when the user is guessing correct and sorry else
                 if (stringCompare(gerne, backEndInterface.findGenre(rank))) {
                     System.out.println("Congratulations, you are guessing correct");
                     count++;
@@ -183,6 +199,7 @@ public class SearchFrontEnd implements SearchFrontEndInterface {
                 System.out.println("Please insert a movie director");
                 String Director = scnr.nextLine();
                 MovieDataInterface movie = new MovieData(rank, year, title, genre, Director);
+                // print sorry when the rank is used and ask for the another input
                 if (backEndInterface.containsMovie(movie)){
                     System.out.println("Sorry, that movie already exist, please try another");
                     continue;
@@ -193,6 +210,7 @@ public class SearchFrontEnd implements SearchFrontEndInterface {
                 }
                 continue;
             }
+            // break the while loop "quit" when input 3
             else if (result.equals("3")){
                 break;
             }
@@ -220,11 +238,9 @@ public class SearchFrontEnd implements SearchFrontEndInterface {
         for (int i = 0; i < str2.length; i++){
             for (int j = 0; j < target2.length; j++){
                 if (str2[i].equalsIgnoreCase(target2[j])) return true;
-                System.out.println(str2[i] + " $$ " + target2[j]);
             }
         }
         return false;
     }
-
 }
-
+    
