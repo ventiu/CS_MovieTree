@@ -34,7 +34,7 @@ Front End Developer:
 @wisc.edu Email: twen22@wisc.edu
 Files Written By: SearchFrontEnd.java
 Additional Contributions: <list any non-code contributions to team work here>
-Referenced Works: get similarity ratio borrows from https://www.codeleading.com/article/92841198406/ 
+Referenced Works: none
 Signature: Tianyou Wen
 
 Integration Manager:

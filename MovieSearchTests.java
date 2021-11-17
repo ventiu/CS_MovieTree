@@ -2,7 +2,12 @@ import java.io.FileNotFoundException;
 import java.util.LinkedList;
 import java.util.List;
 import java.io.InputStream;
+import java.beans.Transient;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.util.Scanner;
 // --== CS400 Project Two File Header ==--
 // Name: Emma Ashton
 // Email: kashton@wisc.edu
@@ -292,7 +297,93 @@ public class MovieSearchTests {
       
       
     // Front End Developer Tests
-/**
+    // Below is the code that actually implements the redirection of System.in and System.out,
+    // and you are welcome to ignore this code: focusing instead on how the constructor and
+    // checkOutput() method is used int he example above.
+
+    private PrintStream saveSystemOut; // store standard io references to restore after test
+    private PrintStream saveSystemErr;
+    private InputStream saveSystemIn;
+    private ByteArrayOutputStream redirectedOut; // where output is written to durring the test
+    private ByteArrayOutputStream redirectedErr;
+
+    /**
+     * Creates a new test object with the specified string of simulated user input text.
+     * @param programInput the String of text that you want to simulate being typed in by the user.
+     */
+    public MovieSearchTests(String programInput) {
+        // backup standard io before redirecting for tests
+        saveSystemOut = System.out;
+        saveSystemErr = System.err;
+        saveSystemIn = System.in;    
+        // create alternative location to write output, and to read input from
+        System.setOut(new PrintStream(redirectedOut = new ByteArrayOutputStream()));
+        System.setErr(new PrintStream(redirectedErr = new ByteArrayOutputStream()));
+        System.setIn(new ByteArrayInputStream(programInput.getBytes()));
+    }
+
+    /**
+     * Call this method after running your test code, to check whether the expected
+     * text was printed out to System.out and System.err.  Calling this method will 
+     * also un-redirect standard io, so that the console can be used as normal again.
+     * 
+     * @return captured text that was printed to System.out and System.err durring test.
+     */
+    public String checkOutput() {
+        try {
+            String programOutput = redirectedOut.toString() + redirectedErr.toString();
+            return programOutput;    
+        } finally {
+            // restore standard io to their pre-test states
+            System.out.close();
+            System.setOut(saveSystemOut);
+            System.err.close();
+            System.setErr(saveSystemErr);
+            System.setIn(saveSystemIn);    
+        }
+    }
+    @Test
+    public void testMenu(){
+        MovieSearchTests tester = new MovieSearchTests("1\n");
+        SearchFrontEnd FrontEnd = new SearchFrontEnd();
+		SearchBackEnd BackEnd = new SearchBackEnd();
+
+		FrontEnd.run(BackEnd);
+        String output = tester.checkOutput();
+        assertTrue(output.startsWith("Movie Tree Menu") && 
+           output.contains("1. Entering a rank to get a trivia question asked") &&
+		   output.contains("2. Entering in their own movies with ranks that are above 1000") &&
+		   output.contains("3. Quit") );
+    }
+    @Test
+    public void testGameFormat() {
+        MovieSearchTests tester = new MovieSearchTests("1\n1\n2014\njason\naction\n");
+        SearchFrontEnd FrontEnd = new SearchFrontEnd();
+		SearchBackEnd BackEnd = new SearchBackEnd();
+
+		FrontEnd.run(BackEnd);
+        String output = tester.checkOutput();
+        assertTrue(
+           output.contains("Enter a rank:") &&
+		   output.contains("Please guess the movie's Year:") &&
+		   output.contains("Please guess the movie's Director:") &&
+           output.contains("Please guess the movie's Gerne:"));
+    }
+    @Test 
+    public void testscore() {
+        MovieSearchTests tester = new MovieSearchTests("1\n1\n2014\njason\naction\n1\n");
+        SearchFrontEnd FrontEnd = new SearchFrontEnd();
+		SearchBackEnd BackEnd = new SearchBackEnd();
+
+		FrontEnd.run(BackEnd);
+        String output = tester.checkOutput();
+        assertTrue(
+           output.contains("Congratulations, you are guessing correct") &&
+		   output.contains("Sorry, you are guessing incorrect, the correct answer is: James Gunn") &&
+		   output.contains("Congratulations, your guessing correct percentage is more than 60%, score + 1") &&
+           output.contains("Current Score: 1"));
+    }
+    /**
        * This tests the inserting of new movies into the list from the ui. It first adds a movie that already exists and makes
        * sure that it isn't overwritten. Then it adds a new movie and makes sure it was actually added to the list
        */
