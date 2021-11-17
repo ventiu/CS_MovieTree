@@ -1,32 +1,21 @@
+import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
-import java.io.InputStream;
-import java.beans.Transient;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.PrintStream;
-import java.util.Scanner;
-// --== CS400 Project Two File Header ==--
-// Name: Emma Ashton
-// Email: kashton@wisc.edu
-// Team: Red
-// Group: BA
-// TA: Cameron Ruggles
-// Lecturer: Gary Dahl
-// Notes to Grader: <optional extra notes>
 
-import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+
 
 
 public class MovieSearchTests {
-
-
+	
+	
     /**
      * This method tests the MovieLoaders ability to read from a directory accurately.
      * @throws FileNotFoundException
+     * @author Justin and Emma
      */
     @Test
     public void testReadDirectory() throws FileNotFoundException {
@@ -58,6 +47,7 @@ public class MovieSearchTests {
     /**
      * This method tests the MovieLoaders ability to properly read and format an individual CSV line.
      * @return Boolean of successful completion(True), else False.
+     * @author Justin and Emma
      */
 	  @Test 
 	  public void testReadCSVLine() { 
@@ -91,6 +81,7 @@ public class MovieSearchTests {
     /**
      * This method tests the MovieLoaders ability to accurately read a CSV file by testing against the first three lines.
      * @throws FileNotFoundException
+     * @author Justin and Emma
      */
 	  @Test 
 	  public void testReadFile() throws FileNotFoundException { 
@@ -128,6 +119,7 @@ public class MovieSearchTests {
 	  /**
 	   * This test reads a directory containing multiple files and checks to see if the list is the correct length
 	   * @throws FileNotFoundException
+	   * @author Emma
 	   */
 	  @Test
 	  public void testMultipleFiles() throws FileNotFoundException{
@@ -138,6 +130,7 @@ public class MovieSearchTests {
     // Back End Developer Tests
 	  /**
        * JUnit5 test that tests inserting red uncle, and double checks that the correct nodes end up in the correct locations in the tree.
+       * @author Julia Oghigian
        */
       @Test
       public void BackEndDeveloperTestingInsertingWithRedUncle() {
@@ -173,8 +166,8 @@ public class MovieSearchTests {
       /**
        * JUnit5 test that tests isBlack and node coloring while inserting with red
        * uncle. This makes sure red black tree properties are being followed
+       * @author Julia Oghigian
        */
-
       @Test
       public void BackEndDeveloperTestIsBlack() {
               SearchBackEnd redBlackTree = new SearchBackEnd();
@@ -209,6 +202,7 @@ public class MovieSearchTests {
       /**
        * JUnit5 test that tests findDirector by adding 4 elements to the red black tree and seeing if it gets the correct director 
        * when it is called
+       * @author Julia Oghigian
        */
       @Test
       public void backEndDeveloperTestingFindDirector() {
@@ -229,6 +223,7 @@ public class MovieSearchTests {
       /**
        * This method adds 5 movies to a red black tree then checks the contains() method on two that do exist and one that doesn't
        * and sees if they are true and false respectively
+       * @authon Emma
        */
       @Test
       public void testContians()
@@ -255,6 +250,7 @@ public class MovieSearchTests {
        * then does a preorder traversal with traverse() and gets an array that has true for all elements that do exist
        * and false for all those that don't. If any of the elements are false it fails the test.
        * @throws FileNotFoundException
+       * @author Emma
        */
       @Test
       public void testHasAllNodes() throws FileNotFoundException
@@ -283,6 +279,7 @@ public class MovieSearchTests {
        * A helper method that does a pre-order traversal of the tree and updates the boolean array with true for all ranks that it finds
        * @param output - an array of booleans, it is initialized to false and is set to true for all indexes equal to rank - 1
        * @param subtree - the root of the subtree
+       * @author Emma
        */
       private void traverse(boolean[] output,  SearchBackEnd.Node<MovieData> subtree)
       {
@@ -294,98 +291,13 @@ public class MovieSearchTests {
     	  
     	  traverse(output, subtree.rightChild);
       }
-      
+      //https://stackoverflow.com/questions/31635698/junit-testing-for-user-input-using
       
     // Front End Developer Tests
-    // Below is the code that actually implements the redirection of System.in and System.out,
-    // and you are welcome to ignore this code: focusing instead on how the constructor and
-    // checkOutput() method is used int he example above.
-
-    private PrintStream saveSystemOut; // store standard io references to restore after test
-    private PrintStream saveSystemErr;
-    private InputStream saveSystemIn;
-    private ByteArrayOutputStream redirectedOut; // where output is written to durring the test
-    private ByteArrayOutputStream redirectedErr;
-
-    /**
-     * Creates a new test object with the specified string of simulated user input text.
-     * @param programInput the String of text that you want to simulate being typed in by the user.
-     */
-    public MovieSearchTests(String programInput) {
-        // backup standard io before redirecting for tests
-        saveSystemOut = System.out;
-        saveSystemErr = System.err;
-        saveSystemIn = System.in;    
-        // create alternative location to write output, and to read input from
-        System.setOut(new PrintStream(redirectedOut = new ByteArrayOutputStream()));
-        System.setErr(new PrintStream(redirectedErr = new ByteArrayOutputStream()));
-        System.setIn(new ByteArrayInputStream(programInput.getBytes()));
-    }
-
-    /**
-     * Call this method after running your test code, to check whether the expected
-     * text was printed out to System.out and System.err.  Calling this method will 
-     * also un-redirect standard io, so that the console can be used as normal again.
-     * 
-     * @return captured text that was printed to System.out and System.err durring test.
-     */
-    public String checkOutput() {
-        try {
-            String programOutput = redirectedOut.toString() + redirectedErr.toString();
-            return programOutput;    
-        } finally {
-            // restore standard io to their pre-test states
-            System.out.close();
-            System.setOut(saveSystemOut);
-            System.err.close();
-            System.setErr(saveSystemErr);
-            System.setIn(saveSystemIn);    
-        }
-    }
-    @Test
-    public void testMenu(){
-        MovieSearchTests tester = new MovieSearchTests("1\n");
-        SearchFrontEnd FrontEnd = new SearchFrontEnd();
-		SearchBackEnd BackEnd = new SearchBackEnd();
-
-		FrontEnd.run(BackEnd);
-        String output = tester.checkOutput();
-        assertTrue(output.startsWith("Movie Tree Menu") && 
-           output.contains("1. Entering a rank to get a trivia question asked") &&
-		   output.contains("2. Entering in their own movies with ranks that are above 1000") &&
-		   output.contains("3. Quit") );
-    }
-    @Test
-    public void testGameFormat() {
-        MovieSearchTests tester = new MovieSearchTests("1\n1\n2014\njason\naction\n");
-        SearchFrontEnd FrontEnd = new SearchFrontEnd();
-		SearchBackEnd BackEnd = new SearchBackEnd();
-
-		FrontEnd.run(BackEnd);
-        String output = tester.checkOutput();
-        assertTrue(
-           output.contains("Enter a rank:") &&
-		   output.contains("Please guess the movie's Year:") &&
-		   output.contains("Please guess the movie's Director:") &&
-           output.contains("Please guess the movie's Gerne:"));
-    }
-    @Test 
-    public void testscore() {
-        MovieSearchTests tester = new MovieSearchTests("1\n1\n2014\njason\naction\n1\n");
-        SearchFrontEnd FrontEnd = new SearchFrontEnd();
-		SearchBackEnd BackEnd = new SearchBackEnd();
-
-		FrontEnd.run(BackEnd);
-        String output = tester.checkOutput();
-        assertTrue(
-           output.contains("Congratulations, you are guessing correct") &&
-		   output.contains("Sorry, you are guessing incorrect, the correct answer is: James Gunn") &&
-		   output.contains("Congratulations, your guessing correct percentage is more than 60%, score + 1") &&
-           output.contains("Current Score: 1"));
-    }
-    /**
+      /**
        * This tests the inserting of new movies into the list from the ui. It first adds a movie that already exists and makes
        * sure that it isn't overwritten. Then it adds a new movie and makes sure it was actually added to the list
+       * @author Emma
        */
       @Test
       public void testInsertUI()
@@ -408,6 +320,7 @@ public class MovieSearchTests {
        * This tests the trivia portion of the ui. First it answers the trivia question correctly and makes sure the score was increased
        * then it answers the questions wrong and makes sure the score is not increased.
        * @throws FileNotFoundException
+       * @author Emma
        */
       @Test
       public void testTrivia() throws FileNotFoundException
@@ -433,7 +346,8 @@ public class MovieSearchTests {
       /**
        * This tests the string compare method. It makes sure case is ignored, and makes sure that it counts any element from a
        * list is counted. It also checks that a string that is the correct answer plus some is not counted and that a string that is the
-       *  correct answer minus some is not counted
+       * correct answer minus some is not counted
+       * @author Emma
        */
       @Test
       public void testStringCompare()
@@ -444,7 +358,6 @@ public class MovieSearchTests {
     	  assertEquals(false, ui.stringCompare("thing1", "thing"));
     	  assertEquals(false, ui.stringCompare("t", "tt,ttt,tttt"));
       }
-
 
 }
 
